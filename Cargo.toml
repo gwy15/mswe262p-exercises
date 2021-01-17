@@ -8,5 +8,9 @@ path = "./week1/main.rs"
 name = "week1"
 
 [[bin]]
-path = "./week2/ex4.1.rs"
+path = "./week2/four.rs"
 name = "week2-1"
+
+[[bin]]
+path = "./week2/five.rs"
+name = "week2-2"

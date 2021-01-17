@@ -11,3 +11,7 @@ make week1
 cd week1
 ./main ../pride-and-prejudice.txt
 ```
+
+## week2
+
+
