@@ -4,14 +4,30 @@
 
 ```bash
 # compile
-cd ~/mswe-242p
-make week1
+cd ~/mswe-242p/week1 && rustc -o main main.rs
 
-# enter directory & run
-cd week1
-./main ../pride-and-prejudice.txt
+#  run
+cd ~/mswe-242p/week1 && ./main ../pride-and-prejudice.txt
 ```
 
 ## week2
 
+You could compile & run either the easy way (RECOMMENDED):
+```bash
+cd week2
+cargo r --release --bin week2-1 ../pride-and-prejudice.txt
+cargo r --release --bin week2-2 ../pride-and-prejudice.txt
+```
 
+Or the manual way:
+```bash
+# compile
+cd week2
+rustc -o week2-1 four.rs
+rustc -o week2-2 five.rs
+
+# run
+cd week2
+./week2-1 ../pride-and-prejudice.txt
+./week2-2 ../pride-and-prejudice.txt
+```
