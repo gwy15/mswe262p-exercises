@@ -1,3 +1,5 @@
+//! Style #4
+//! ==============================
 //! Constraints:
 //! + No abstractions
 //! + No use of library functions
