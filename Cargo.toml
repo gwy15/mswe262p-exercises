@@ -4,9 +4,9 @@ version = "0.0.1"
 edition = "2018"
 
 [[bin]]
-path = "week1"
-name = "main"
+path = "./week1/main.rs"
+name = "week1"
 
 [[bin]]
-path = "week2"
-name = "ex4.1"
+path = "./week2/ex4.1.rs"
+name = "week2-1"
