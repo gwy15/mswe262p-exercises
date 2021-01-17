@@ -1,0 +1,12 @@
+[package]
+name = "SWE262P-Exercises"
+version = "0.0.1"
+edition = "2018"
+
+[[bin]]
+path = "week1"
+name = "main"
+
+[[bin]]
+path = "week2"
+name = "ex4.1"
