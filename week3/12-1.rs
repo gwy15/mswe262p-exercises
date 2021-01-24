@@ -13,20 +13,20 @@
 //! - Objects
 //! - Actors
 
-use core::panic;
 use std::{
     cmp::Reverse,
     collections::{HashMap, HashSet},
     env,
     fs::File,
     io::{BufRead, BufReader},
+    panic,
 };
 
 /// This is core abstraction: each *THING* should have one single exposed procedure.
 trait Letterbox {
     type Input;
     type Output;
-    fn dispatch(&mut self, message: Self::Input) -> Self::Output;
+    fn dispatch(&mut self, command: &'static str, message: Self::Input) -> Self::Output;
 }
 
 /// The main logic lies inside.
@@ -37,48 +37,42 @@ struct WordFrequencyController {
     counter: Option<WordFrequencyManager>,
 }
 impl Letterbox for WordFrequencyController {
-    type Input = (String, String);
+    type Input = String;
     type Output = ();
-    fn dispatch(&mut self, message: (String, String)) {
-        let (command, file) = message;
-        match command.as_str() {
+    fn dispatch(&mut self, command: &'static str, message: String) {
+        let file = message;
+        match command {
             "init" => {
                 self.data = Some(DataStorageManager::default());
                 self.stop_words = Some(StopWordsManager::default());
                 self.counter = Some(WordFrequencyManager::default());
-                self.data
-                    .as_mut()
-                    .unwrap()
-                    .dispatch(("init".to_string(), file));
+                self.data.as_mut().unwrap().dispatch("init", file);
                 self.stop_words
                     .as_mut()
                     .unwrap()
-                    .dispatch(("init".to_string(), "".to_string()));
+                    .dispatch("init", "".to_string());
             }
             "run" => {
                 let words = self
                     .data
                     .as_mut()
                     .unwrap()
-                    .dispatch(("words".to_string(), "".to_string()));
+                    .dispatch("words", "".to_string());
                 for w in words {
                     if !self
                         .stop_words
                         .as_mut()
                         .unwrap()
-                        .dispatch(("is_stop_word".to_string(), w.clone()))
+                        .dispatch("is_stop_word", w.clone())
                     {
-                        self.counter
-                            .as_mut()
-                            .unwrap()
-                            .dispatch(("incr".to_string(), w));
+                        self.counter.as_mut().unwrap().dispatch("incr", w);
                     }
                 }
                 for (index, (word, times)) in self
                     .counter
                     .as_mut()
                     .unwrap()
-                    .dispatch(("top".to_string(), "25".to_string()))
+                    .dispatch("top", "25".to_string())
                     .into_iter()
                     .enumerate()
                 {
@@ -86,7 +80,7 @@ impl Letterbox for WordFrequencyController {
                 }
             }
             _ => {
-                panic!(&format!("unknown command: {}", command));
+                panic!(format!("unknown command: {}", command));
             }
         }
     }
@@ -98,37 +92,28 @@ struct DataStorageManager {
     /// The words from file
     words: Vec<String>,
 }
-impl DataStorageManager {
-    fn init(&mut self, file: String) {
-        let f = File::open(file).unwrap();
-        let reader = BufReader::new(f);
-        for line in reader.lines() {
-            let line = line.unwrap();
-            self.words.extend(
-                line.split(|ch: char| !ch.is_ascii_alphabetic())
-                    .filter(|w| w.len() > 1)
-                    .map(|s| s.to_lowercase()),
-            );
-        }
-    }
-    fn words(&self) -> Vec<String> {
-        self.words.clone()
-    }
-}
 impl Letterbox for DataStorageManager {
-    // command, file. For "words" command, the file is ignored.
-    type Input = (String, String);
+    type Input = String;
     type Output = Vec<String>;
-    fn dispatch(&mut self, message: (String, String)) -> Self::Output {
-        let (command, file) = message;
-        match command.as_str() {
+    fn dispatch(&mut self, command: &'static str, message: String) -> Self::Output {
+        let file = message;
+        match command {
             "init" => {
-                self.init(file);
+                let f = File::open(file).unwrap();
+                let reader = BufReader::new(f);
+                for line in reader.lines() {
+                    let line = line.unwrap();
+                    self.words.extend(
+                        line.split(|ch: char| !ch.is_ascii_alphabetic())
+                            .filter(|w| w.len() > 1)
+                            .map(|s| s.to_lowercase()),
+                    );
+                }
                 vec![]
             }
-            "words" => self.words(),
+            "words" => self.words.clone(),
             _ => {
-                panic!(&format!("unknown command: {}", command));
+                panic!(format!("unknown command: {}", command));
             }
         }
     }
@@ -139,11 +124,11 @@ struct StopWordsManager {
     stop_words: HashSet<String>,
 }
 impl Letterbox for StopWordsManager {
-    type Input = (String, String);
+    type Input = String;
     type Output = bool;
-    fn dispatch(&mut self, message: (String, String)) -> bool {
-        let (command, word) = message;
-        match command.as_str() {
+    fn dispatch(&mut self, command: &'static str, message: String) -> bool {
+        let word = message;
+        match command {
             "init" => {
                 let f = File::open("../stop_words.txt").unwrap();
                 let reader = BufReader::new(f);
@@ -155,7 +140,7 @@ impl Letterbox for StopWordsManager {
             }
             "is_stop_word" => self.stop_words.contains(&word),
             _ => {
-                panic!(&format!("unknown command: {}", command));
+                panic!(format!("unknown command: {}", command));
             }
         }
     }
@@ -166,24 +151,23 @@ struct WordFrequencyManager {
     counter: HashMap<String, usize>,
 }
 impl Letterbox for WordFrequencyManager {
-    type Input = (String, String);
+    type Input = String;
     type Output = Vec<(String, usize)>;
-    fn dispatch(&mut self, message: (String, String)) -> Vec<(String, usize)> {
-        let (command, arg) = message;
-        match command.as_str() {
+    fn dispatch(&mut self, command: &'static str, message: String) -> Vec<(String, usize)> {
+        match command {
             "incr" => {
-                *self.counter.entry(arg).or_default() += 1;
+                *self.counter.entry(message).or_default() += 1;
                 vec![]
             }
             "top" => {
                 let mut entries: Vec<(String, usize)> =
                     self.counter.iter().map(|(w, c)| (w.clone(), *c)).collect();
                 entries.sort_unstable_by_key(|en| Reverse(en.1));
-                entries.truncate(arg.parse().unwrap());
+                entries.truncate(message.parse().unwrap());
                 entries
             }
             _ => {
-                panic!(&format!("unknown command: {}", command));
+                panic!(format!("unknown command: {}", command));
             }
         }
     }
@@ -192,6 +176,6 @@ impl Letterbox for WordFrequencyManager {
 fn main() {
     let mut controller = WordFrequencyController::default();
     let file = env::args().skip(1).next().expect("No file provided.");
-    controller.dispatch(("init".to_string(), file));
-    controller.dispatch(("run".to_string(), "".to_string()));
+    controller.dispatch("init", file);
+    controller.dispatch("run", "".to_string());
 }

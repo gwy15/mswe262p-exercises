@@ -34,3 +34,23 @@ cd week2
 ./week2-2 ../pride-and-prejudice.txt
 ./week2-3 ../pride-and-prejudice.txt
 ```
+
+## week3
+
+You could compile & run either the easy way (RECOMMENDED):
+```bash
+cd week3
+cargo r --release --bin 12-1 ../pride-and-prejudice.txt
+```
+
+Or the manual way:
+```bash
+# compile
+cd week3
+rustc -o 12-1 12-1.rs
+
+# run
+cd week3
+./12-1 ../pride-and-prejudice.txt
+```
+
