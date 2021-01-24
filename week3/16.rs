@@ -22,15 +22,14 @@
 //! Another thing worth mentioning is that, the publish-subscribe pattern is, to some extent, not
 //! safe. Let's consider this: handler A is called for event a, during processing it publishes
 //! another event b that implicitly invoke handler B. Now, if handler B publishes event a again
-//! -- handler A is called twice! This may cause unexpected behavior! For example, a HashMap could
-//! be modified while iteration!
+//! -- handler A is called twice! This may cause unexpected behavior. For example, a HashMap could
+//! be modified while iteration.
 //! Thankfully Rust by its design has detected that issue and forbid compiling in the first place.
 //! However, in order to complete my homework, I used smart pointers and interior mutability to bypass
 //! that - don't take me wrong, this code is still safe but will panic under the situation I explained
 //! above through runtime borrow checking.
-//! The cost is that this code will be absolutely harder to read - especially for those who are not
+//! The cost is that this code will be harder to read - especially for those who are not
 //! familiar with the Rust language.
-//! I hope you have fun reading this XD
 
 use std::{
     cell::RefCell,
@@ -165,7 +164,7 @@ impl EventHandler for DataStorage {
     fn handle(&self, event: Event) {
         match event {
             Event::Load { filename } => {
-                let f = File::open(filename).unwrap();
+                let f = File::open(filename).expect("Failed to open file.");
                 let reader = BufReader::new(f);
                 let mut words = self.words.borrow_mut();
                 for line in reader.lines() {
@@ -207,7 +206,7 @@ impl EventHandler for StopWordsFilter {
     fn handle(&self, event: Event) {
         match event {
             Event::Load { .. } => {
-                let f = File::open("../stop_words.txt").unwrap();
+                let f = File::open("../stop_words.txt").expect("failed to open stop words file.");
                 let mut reader = BufReader::new(f);
                 let mut line = String::new();
                 reader.read_to_string(&mut line).unwrap();
@@ -274,6 +273,6 @@ fn main() {
     let _word_counter = WordCounter::new(event_manager.clone());
 
     event_manager.borrow().publish(Event::Run {
-        filename: std::env::args().skip(1).next().expect("Usage: ./14 <file>"),
+        filename: std::env::args().skip(1).next().expect("Usage: ./16 <file>"),
     });
 }

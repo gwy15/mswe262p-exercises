@@ -47,6 +47,7 @@ You could compile & run either the easy way (RECOMMENDED):
 cd week3
 cargo r --release --bin 12-1 ../pride-and-prejudice.txt
 node 13.js ../pride-and-prejudice.txt
+cargo r --release --bin 16 ../pride-and-prejudice.txt
 ```
 
 Or the manual way:
@@ -56,9 +57,11 @@ cd week3
 
 # compile
 rustc -o 12-1 12-1.rs
+rustc -o 16 16.rs
 
 # run
 ./12-1 ../pride-and-prejudice.txt
 node 13.js ../pride-and-prejudice.txt
+./16 ../pride-and-prejudice.txt
 ```
 
