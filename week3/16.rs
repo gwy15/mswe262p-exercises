@@ -32,7 +32,7 @@
 //! familiar with the Rust language.
 
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     cmp::Reverse,
     collections::{HashMap, HashSet},
     fs::File,
@@ -263,6 +263,40 @@ impl EventHandler for WordCounter {
     }
 }
 
+struct ZWordHolic {
+    zwords_count: Cell<usize>,
+}
+impl ZWordHolic {
+    pub fn new(manager: Rc<RefCell<EventManager>>) -> Rc<dyn EventHandler> {
+        let me = Rc::new(Self {
+            zwords_count: Cell::new(0),
+        });
+        manager
+            .borrow_mut()
+            .subscribe(EventKind::ValidWord, me.clone());
+        manager.borrow_mut().subscribe(EventKind::Print, me.clone());
+        me
+    }
+}
+impl EventHandler for ZWordHolic {
+    fn handle(&self, event: Event) {
+        match event {
+            Event::ValidWord(word) => {
+                if word.contains('z') {
+                    self.zwords_count.set(self.zwords_count.get() + 1);
+                }
+            }
+            Event::Print => {
+                println!(
+                    "Number of non-stop words with z: {}",
+                    self.zwords_count.get()
+                );
+            }
+            _ => panic!("Unregistered event"),
+        }
+    }
+}
+
 // ================= main ====================
 
 fn main() {
@@ -271,6 +305,7 @@ fn main() {
     let _application = Application::new(event_manager.clone());
     let _stopwords_filter = StopWordsFilter::new(event_manager.clone());
     let _word_counter = WordCounter::new(event_manager.clone());
+    let _z_word_holic = ZWordHolic::new(event_manager.clone());
 
     event_manager.borrow().publish(Event::Run {
         filename: std::env::args().skip(1).next().expect("Usage: ./16 <file>"),
