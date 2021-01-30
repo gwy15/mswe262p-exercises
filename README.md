@@ -65,3 +65,10 @@ node 13.js ../pride-and-prejudice.txt
 ./16 ../pride-and-prejudice.txt
 ```
 
+
+## week4
+```bash
+cd week4
+node 9-1.js ../pride-and-prejudice.txt
+cargo r --release --bin 10-1 ../pride-and-prejudice.txt
+```
