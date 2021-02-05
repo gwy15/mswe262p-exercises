@@ -72,3 +72,14 @@ cd week4
 node 9-1.js ../pride-and-prejudice.txt
 cargo r --release --bin 10-1 ../pride-and-prejudice.txt
 ```
+
+
+## week5
+```bash
+cd week5
+javac *.java
+# eleven:
+#!! you will be prompted to enter a class name， for example, WordFrequencyController. !!
+java Eleven ../pride-and-prejudice.txt
+
+```
