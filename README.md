@@ -76,10 +76,16 @@ cargo r --release --bin 10-1 ../pride-and-prejudice.txt
 
 ## week5
 ```bash
+# compile
 cd week5
+make
+# run ex 11
 javac *.java
-# eleven:
 #!! you will be prompted to enter a class name， for example, WordFrequencyController. !!
 java Eleven ../pride-and-prejudice.txt
+
+# run ex 20.1
+java -jar ./Framework.jar ./App1.jar ../pride-and-prejudice.txt # run with app1
+java -jar ./Framework.jar ./App2.jar ../pride-and-prejudice.txt # or, run with app2
 
 ```

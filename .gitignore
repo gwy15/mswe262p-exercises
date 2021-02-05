@@ -2,4 +2,5 @@
 *.txt
 
 **.class
+**.jar
 week5/Makefile
