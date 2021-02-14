@@ -3,6 +3,13 @@ name = "SWE262P-Exercises"
 version = "0.0.1"
 edition = "2018"
 
+[dependencies]
+rusqlite = { version = "0.24.2", optional = true }
+
+[features]
+sqlite = [ "rusqlite" ]
+default = [ "sqlite" ]
+
 [[bin]]
 path = "./week1/main.rs"
 name = "week1"
@@ -30,3 +37,8 @@ name = "16"
 [[bin]]
 path = "./week4/10-1.rs"
 name = "10-1"
+
+[[bin]]
+path = "./week6/26-1.rs"
+name = "26-1"
+required-features = [ "sqlite" ]
