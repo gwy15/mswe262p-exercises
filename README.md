@@ -80,7 +80,6 @@ cargo r --release --bin 10-1 ../pride-and-prejudice.txt
 cd week5
 make
 # run ex 11
-javac *.java
 #!! you will be prompted to enter a class name， for example, WordFrequencyController. !!
 java Eleven ../pride-and-prejudice.txt
 
