@@ -88,3 +88,12 @@ java -jar ./Framework.jar ./App1.jar ../pride-and-prejudice.txt # run with app1
 java -jar ./Framework.jar ./App2.jar ../pride-and-prejudice.txt # or, run with app2
 
 ```
+
+## week6
+```bash
+cd week6
+# 26-1, might take a while to fetch sqlite lib from internet.
+cargo r --release --features sqlite --bin 26-1 ../pride-and-prejudice.txt
+# 28
+cargo r --release --bin 28 ../pride-and-prejudice.txt
+```
