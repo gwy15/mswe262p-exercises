@@ -45,3 +45,12 @@ required-features = [ "sqlite" ]
 [[bin]]
 path = "./week6/28.rs"
 name = "28"
+
+[[bin]]
+path = "./week7/21.rs"
+name = "21"
+
+[[bin]]
+path = "./week7/22.rs"
+name = "22"
+
