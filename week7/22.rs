@@ -1,17 +1,17 @@
-//! Style #21
+//! Style #22
 //! ==============================
 //! Constraints:
 //! - Every single procedure and function checks the sanity of its
-//!   arguments and either returns something sensible when the arguments
-//!   are unreasonable or assigns them reasonable values
-//! - All code blocks check for possible errors and escape the block
-//!   when things go wrong, setting the state to something reasonable
+//!   arguments and refuses to continue when the arguments are
+//!   unreasonable
+//! - All code blocks check for all possible errors, possibly print out
+//!   context-specific messages when errors occur, and pass the errors
+//!   up the function call chain
 //!
 //! Possible names:
-//! - Constructive
-//! - Defensive
-//! - Hopeful
-//! - Shit happens, life goes on
+//! - Tantrum
+//! - Design by contract
+//! - Mental breakdown
 
 use std::{
     cmp::Reverse,

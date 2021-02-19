@@ -97,3 +97,13 @@ cargo r --release --features sqlite --bin 26-1 ../pride-and-prejudice.txt
 # 28
 cargo r --release --bin 28 ../pride-and-prejudice.txt
 ```
+
+## week7
+```bash
+cd week7
+
+cargo r --release --bin 21 ../pride-and-prejudice.txt
+cargo r --release --bin 22 ../pride-and-prejudice.txt
+cargo r --release --bin 25 ../pride-and-prejudice.txt
+```
+
