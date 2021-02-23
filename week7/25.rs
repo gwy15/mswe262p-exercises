@@ -23,20 +23,28 @@ type Result<T> = std::result::Result<T, IOError>;
 
 // =========================  core implementation =======================
 
-/// The Unwrap trait converts types from T to T when T is not Result<>
-/// and converts from Result<T> to T.
-/// I.e., functions that return Result<T> (includes IO inside) will be checked and unwrapped
-/// in this trait.
-/// Pure functions will be untouched.
+/// The higher-order function that actually does IO.
+/// Any first-function that wishes to do IO should return `Func<O>` so that it can be a pure function.
+/// The returned higher-order function will then be called as trait `Unwrap`.
+struct Func<O> {
+    f: Box<dyn FnOnce() -> Result<O>>,
+}
+impl<O> Func<O> {
+    pub fn new(f: impl FnOnce() -> Result<O> + 'static) -> Self {
+        Self { f: Box::new(f) }
+    }
+}
+
 trait Unwrap<O> {
     fn my_unwrap(self) -> O;
 }
-impl<O> Unwrap<O> for Result<O> {
+/// Higher-order function
+impl<O> Unwrap<O> for Func<O> {
     fn my_unwrap(self) -> O {
-        // unwrap result here
-        self.unwrap()
+        (self.f)().unwrap()
     }
 }
+/// The default impl
 impl<O> Unwrap<O> for O {
     fn my_unwrap(self) -> O {
         self
@@ -53,6 +61,7 @@ impl<T> TheOne<T> {
         R: Unwrap<O>,
     {
         let ret = f(self.value);
+        // if f includes IO, it will return a higher-order function and will be called here
         let ret = ret.my_unwrap();
         TheOne::<O>::new(ret)
     }
@@ -68,22 +77,24 @@ impl TheOne<String> {
 }
 
 // ============================= logical related implementations =====================
-// functions that include IO have signature that returns Result<>.
+// functions that include IO have signature that returns Func<>.
 
 /// include IO
-fn get_filepath(_: ()) -> Result<String> {
-    match std::env::args().nth(1) {
+fn get_filepath(_: ()) -> Func<String> {
+    Func::new(move || match std::env::args().nth(1) {
         Some(s) => Ok(s),
         None => Err(ErrorKind::InvalidInput.into()),
-    }
+    })
 }
 
 /// include IO
-fn read_file(path: String) -> Result<String> {
-    let mut f = BufReader::new(File::open(path)?);
-    let mut s = String::new();
-    f.read_to_string(&mut s)?;
-    Ok(s)
+fn read_file(path: String) -> Func<String> {
+    Func::new(move || {
+        let mut f = BufReader::new(File::open(path)?);
+        let mut s = String::new();
+        f.read_to_string(&mut s)?;
+        Ok(s)
+    })
 }
 
 fn filter_chars(s: String) -> String {
@@ -102,16 +113,18 @@ fn scan(s: String) -> Vec<String> {
 }
 
 /// include IO
-fn remove_stop_words(words: Vec<String>) -> Result<Vec<String>> {
-    let mut f = BufReader::new(File::open("../stop_words.txt")?);
-    let mut buf = String::new();
-    f.read_to_string(&mut buf)?;
-    let stop_words: HashSet<String> = buf.split(',').map(|s| s.to_string()).collect();
-    let ret = words
-        .into_iter()
-        .filter(|w| w.len() > 1 && !stop_words.contains(w))
-        .collect();
-    Ok(ret)
+fn remove_stop_words(words: Vec<String>) -> Func<Vec<String>> {
+    Func::new(move || {
+        let mut f = BufReader::new(File::open("../stop_words.txt")?);
+        let mut buf = String::new();
+        f.read_to_string(&mut buf)?;
+        let stop_words: HashSet<String> = buf.split(',').map(|s| s.to_string()).collect();
+        let ret = words
+            .into_iter()
+            .filter(|w| w.len() > 1 && !stop_words.contains(w))
+            .collect();
+        Ok(ret)
+    })
 }
 
 fn frequencies(words: Vec<String>) -> HashMap<String, usize> {
