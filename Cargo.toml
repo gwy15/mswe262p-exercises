@@ -57,3 +57,15 @@ name = "22"
 [[bin]]
 path = "./week7/25.rs"
 name = "25"
+
+[[bin]]
+path = "./week8/29-1.rs"
+name = "29"
+
+[[bin]]
+path = "./week8/30-1.rs"
+name = "30"
+
+[[bin]]
+path = "./week8/32-1.rs"
+name = "32"

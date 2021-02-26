@@ -107,3 +107,12 @@ cargo r --release --bin 22 ../pride-and-prejudice.txt
 cargo r --release --bin 25 ../pride-and-prejudice.txt
 ```
 
+
+## week8
+```bash
+cd week8
+# might take a minute to update via internet. Sit back and relax.
+cargo r --release --bin 29 ../pride-and-prejudice.txt
+cargo r --release --bin 30 ../pride-and-prejudice.txt
+cargo r --release --bin 32 ../pride-and-prejudice.txt
+```
