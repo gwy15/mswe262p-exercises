@@ -116,3 +116,11 @@ cargo r --release --bin 29 ../pride-and-prejudice.txt
 cargo r --release --bin 30 ../pride-and-prejudice.txt
 cargo r --release --bin 32 ../pride-and-prejudice.txt
 ```
+
+## week9
+```bash
+cd week9
+python3 week9.py ../pride-and-prejudice.txt
+```
+
+# Spring break!!!! YES!!!!!!
